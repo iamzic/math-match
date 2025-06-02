@@ -1,4 +1,4 @@
-# Math Dash Buddies
+# Math Match!
 
 A multiplayer math game where players compete to solve math problems!
 
