@@ -663,7 +663,15 @@
                     optionsContainer.innerHTML = "";
                 }
 
-                if (gameData.host_id === currentUserId && gameData.current_question && (Object.keys(gameData.question_answered_by || {}).length === Object.keys(gameData.players).length || (Date.now() - (gameData.question_start_time || 0) > 20000) || gameData.last_winner )) { // Host sees Next Q if all answered, or timeout, or someone won round
+                // Show Next Question button for host if:
+                // 1. All players have answered, OR
+                // 2. Time limit has been reached (20 seconds), OR
+                // 3. Someone has won the round
+                const allPlayersAnswered = Object.keys(gameData.question_answered_by || {}).length === Object.keys(gameData.players).length;
+                const timeLimitReached = gameData.question_start_time && (Date.now() - new Date(gameData.question_start_time).getTime() > 20000);
+                const roundWinner = gameData.last_winner;
+
+                if (gameData.host_id === currentUserId && gameData.current_question && (allPlayersAnswered || timeLimitReached || roundWinner)) {
                     nextQuestionBtn.classList.remove('hidden');
                 } else {
                     nextQuestionBtn.classList.add('hidden');
