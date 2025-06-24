@@ -620,8 +620,22 @@
                     schema: 'public',
                     table: 'math_games',
                     filter: `game_id=eq.${gameId}`
-                }, (payload) => {
-                    currentGameData = payload.new;
+                }, async (payload) => {
+                    let gameData = payload.new;
+                    if (!gameData) {
+                        // Fallback: fetch latest game data if payload.new is undefined
+                        const { data, error } = await supabase
+                            .from('math_games')
+                            .select('*')
+                            .eq('game_id', gameId)
+                            .single();
+                        if (error) {
+                            console.error('Failed to fetch latest game data:', error);
+                            return;
+                        }
+                        gameData = data;
+                    }
+                    currentGameData = gameData;
                     updateGameUI(currentGameData);
                 })
                 .subscribe();
