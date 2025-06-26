@@ -621,21 +621,17 @@
                     table: 'math_games',
                     filter: `game_id=eq.${gameId}`
                 }, async (payload) => {
-                    let gameData = payload.new;
-                    if (!gameData) {
-                        // Fallback: fetch latest game data if payload.new is undefined
-                        const { data, error } = await supabase
-                            .from('math_games')
-                            .select('*')
-                            .eq('game_id', gameId)
-                            .single();
-                        if (error) {
-                            console.error('Failed to fetch latest game data:', error);
-                            return;
-                        }
-                        gameData = data;
+                    // Always fetch the latest game data for robust updates
+                    const { data, error } = await supabase
+                        .from('math_games')
+                        .select('*')
+                        .eq('game_id', gameId)
+                        .single();
+                    if (error) {
+                        console.error('Failed to fetch latest game data:', error);
+                        return;
                     }
-                    currentGameData = gameData;
+                    currentGameData = data;
                     updateGameUI(currentGameData);
                 })
                 .subscribe();
